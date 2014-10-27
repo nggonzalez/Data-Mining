@@ -29,7 +29,9 @@ void dumb_solve(double *a, double *y, int n, double eps, int numit, double *x, i
   while(*niter < numit && currentDiscreps > eps) {
     initColToValue(r, n, 0); // r = 0s
     initColToValue(sum, n, 0); // sum = 0s
-
+    if(*niter == 0) {
+      
+    }
     multiplyMatrixByColumn(ax, a, x, n); // ax = Ax
     subtractCols(r, y, ax, n); // r = y - ax
 
@@ -39,9 +41,15 @@ void dumb_solve(double *a, double *y, int n, double eps, int numit, double *x, i
 
     currentDiscreps = pow(norm(n, r), 2);
     discreps[(*niter)++] = currentDiscreps;
-    // printf("currentDiscreps: %.8f\n", currentDiscreps);
+    printf("currentDiscreps: %.8f\n", currentDiscreps);
 
     alpha = calculateAlpha(r, a, n);
+    //alpha = .1;
+    // if(currentDiscreps > discreps[*niter - 1]) {
+    //   alpha = .5*alpha;
+    // } else {
+    //   alpha = 1.2*alpha;
+    // }
     // printf("Alpha %f\n", alpha);
 
     getNextXSoln(x, alpha, r, n);
@@ -58,7 +66,7 @@ void getNextXSoln(double *x, double alpha, double *r, int length) {
     x[i] = x[i] + (alpha * r[i]);
     // printf("x%d: %f\t", i, x[i]);
   }
-  // printf("\n");
+  // printf("\n\n");
 }
 
 
@@ -67,6 +75,7 @@ double calculateAlpha(double *r, double *a, int length) {
   int i;
   for(i = 0; i < length; i++) {
     alpha += r[i] * r[i];
+    // printf("Alpha %f\n", alpha);
   }
 
   double *temp = malloc(sizeof(double) * length);
@@ -75,9 +84,11 @@ double calculateAlpha(double *r, double *a, int length) {
   for(i = 0; i < length; i++) {
     for(row = 0; row < length; row++) {
       tempSum += r[row] * getValueInMatrix(length, row, i, a);
+      // printf("tempSum: %f\n", tempSum);
     }
 
     temp[i] = tempSum;
+    tempSum = 0;
   }
 
   for(i = 0; i < length; i++) {
@@ -156,7 +167,7 @@ int main(int argc, char*argv[]) {
   //     10y – 3z = 11
   //            z = 3
 
-  int n = 4;
+  int n = 3;
   int numit = 1000;
   int niter = 0;
   double eps = 0.000001;
@@ -180,17 +191,39 @@ int main(int argc, char*argv[]) {
   // y[1] = 11;
   // y[2] = 3;
   int row, col;
-  for(row = 0; row < n; row++) {
-    for (col = 0; col < n; col++)
-    {
-      if(row == col && col != 0) {
-        setValueInMatrix(n, row, col, 1.0/ (double)(col*col), a);
-      } else {
-        setValueInMatrix(n, row, col, 0, a);
-      }
-    }
-  }
-  initColToValue(y, n, 1.0);
+  // for(row = 0; row < n; row++) {
+  //   for (col = 0; col < n; col++)
+  //   {
+  //     if(row == col) {
+  //       setValueInMatrix(n, row, col, 1.0/ (double)((row+1)*(col+1)), a);
+  //     } else {
+  //       setValueInMatrix(n, row, col, 0, a);
+  //     }
+  //   }
+  // }
+  // initColToValue(y, n, 1.0);
+
+  // a[0] = 1;
+  // a[1] = 1;
+  // a[2] = 2;
+  // a[3] = -2;
+
+  // y[0] = 3;
+  // y[1] = -4;
+
+  a[0] = 1;
+  a[1] = -2;
+  a[2] = 3;
+  a[3] = 2;
+  a[4] = 1;
+  a[5] = 1;
+  a[6] = -3;
+  a[7] = 2;
+  a[8] = -2;
+
+  y[0] = 7;
+  y[1] = 4;
+  y[2] = -10;
 
   dumb_solve(a, y, n, eps, numit, x, &niter, discreps);
 

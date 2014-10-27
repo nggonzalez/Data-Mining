@@ -162,7 +162,7 @@ double norm(int n, int col, double *u) {
     sum += pow(getValueInMatrix(n, k, col, u), 2);
   }
 
-  return sqrt(sum);  
+  return sqrt(sum);
 }
 
 double calculateUSquared(int n, int col, double* u) {

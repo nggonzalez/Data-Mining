@@ -55,32 +55,36 @@ double distance(double x1, double x2, double y1, double y2);
 void sortNeighborsByDistance(Neighbor* distances, int n);
 
 int main(int argc, char *argv[]) {
-  // int n, k, *iz, *iz_naive, i, j, h;
-  // double *a;
+  int n, k, *iz, *iz_naive, i, j, h;
+  double *a;
 
-  // n = 1000;
-  // k = 10;
-  // a = malloc(n * 2 * sizeof(double));
-  // iz = calloc(n * k, sizeof(int));
-  // iz_naive = calloc(n * k, sizeof(int));
+  n = 1000;
+  k = 50;
+  a = malloc(n * 2 * sizeof(double));
+  iz = calloc(n * k, sizeof(int));
+  iz_naive = calloc(n * k, sizeof(int));
 
-  // for(i = 0; i < 2*n; i++){
-  //   a[i] = ((double) rand() / (double) RAND_MAX -.5) * 100;
-  // }
+  for(i = 0; i < 2*n; i++){
+    a[i] = ((double) rand() / (double) RAND_MAX -.5) * 100;
+  }
 
   // seek_naive(a, n, k, iz_naive);
-  // seek(a, n, k, iz);
+  seek(a, n, k, iz);
   // for(i = 0; i < n; i++) {
   //   printf("(%d)[%.5f, %.5f]:\t", i, a[2 * i], a[2 * i + 1]);
   //   for(j = 0; j < k; j++){
   //     printf("%d\t", iz[i * k + j]);
   //   }
-  //   printf("||\t");
-  //   for(j = 0; j < k; j++){
-  //     printf("%d\t", iz_naive[i * k + j]);
-  //   }
+  //   // printf("||\t");
+  //   // for(j = 0; j < k; j++){
+  //   //   printf("%d\t", iz_naive[i * k + j]);
+  //   // }
   //   printf("\n");
   // }
+
+  free(a);
+  free(iz);
+  free(iz_naive);
   return 1;
 }
 
@@ -157,7 +161,22 @@ void seek(double* a, int n, int k, int* iz) {
     // findNeighborsNaive(subPoints, points[i], sub_iz, subN, k);
     seekHelper(subPoints, subN, k, sub_iz, points[i]);
     putNeighborsIntoIz(iz, sub_iz, i, k);
+    free(sub_iz);
+    free(neighboringLeaves);
+    free(neighboringLeafIndex);
+    free(subPoints);
   }
+  free(permutations);
+  for(h = 0; h < (*qtreeSize); h++) {
+    free(qtree[h]);
+  }
+  free(qtree);
+  free(qtreeSize);
+  free(points);
+  free(searchQueue);
+  free(leaves);
+  free(pointsToLeaves);
+
 }
 
 void buildQtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k,
@@ -282,6 +301,8 @@ void buildQtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k,
       child4->permutationStart = indices[3];
       child4->permutationEnd = indices[4];
 
+      free(indices);
+
       // Add children to the qtree
       (*qtree)[maxBoxIndex + 1] = child1;
       (*qtree)[maxBoxIndex + 2] = child2;
@@ -360,6 +381,10 @@ void sort(int *permutations, Point *points, int *indices, int permStart,
   }
 
   indices[4] = indexSum;
+  free(child1Array);
+  free(child2Array);
+  free(child3Array);
+  free(child4Array);
 }
 
 int pointInBox(Point p, Box b) {
@@ -403,6 +428,7 @@ void findNeighbors(Box **qtree, Box **neighboringLeaves, Point p, double radius,
       neighboringLeaves[(*neighboringLeafIndex)++] = node;
     }
   }
+  free(searchQueue);
 }
 
 int overlap(Point p, double radius, Box node) {
@@ -587,5 +613,8 @@ void seekHelper(Point* points, int n, int k, int* iz, Point current) {
     iz[i] = neighbors[i].index;
   }
 
-  return;
+  free(kth);
+  free(distances);
+  free(selection);
+  free(neighbors);
 }

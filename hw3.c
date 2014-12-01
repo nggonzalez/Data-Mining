@@ -55,32 +55,33 @@ double distance(double x1, double x2, double y1, double y2);
 void sortNeighborsByDistance(Neighbor* distances, int n);
 
 int main(int argc, char *argv[]) {
-  int n, k, *iz, *iz_naive, i, j, h;
-  double *a;
+  // int n, k, *iz, *iz_naive, i, j, h;
+  // double *a;
 
-  n = 5;
-  k = 2;
-  a = malloc(n * 2 * sizeof(double));
-  iz = calloc(n * k, sizeof(int));
-  iz_naive = calloc(n * k, sizeof(int));
+  // n = 1000;
+  // k = 10;
+  // a = malloc(n * 2 * sizeof(double));
+  // iz = calloc(n * k, sizeof(int));
+  // iz_naive = calloc(n * k, sizeof(int));
 
-  for(i = 0; i < 2*n; i++){
-    a[i] = ((double) rand() / (double) RAND_MAX -.5) * 100;
-  }
+  // for(i = 0; i < 2*n; i++){
+  //   a[i] = ((double) rand() / (double) RAND_MAX -.5) * 100;
+  // }
 
-  seek_naive(a, n, k, iz_naive);
-  seek(a, n, k, iz);
-  for(i = 0; i < n; i++) {
-    printf("(%d)[%.5f, %.5f]:\t", i, a[2 * i], a[2 * i + 1]);
-    for(j = 0; j < k; j++){
-      printf("%d\t", iz[i * k + j]);
-    }
-    printf("||\t");
-    for(j = 0; j < k; j++){
-      printf("%d\t", iz_naive[i * k + j]);
-    }
-    printf("\n");
-  }
+  // seek_naive(a, n, k, iz_naive);
+  // seek(a, n, k, iz);
+  // for(i = 0; i < n; i++) {
+  //   printf("(%d)[%.5f, %.5f]:\t", i, a[2 * i], a[2 * i + 1]);
+  //   for(j = 0; j < k; j++){
+  //     printf("%d\t", iz[i * k + j]);
+  //   }
+  //   printf("||\t");
+  //   for(j = 0; j < k; j++){
+  //     printf("%d\t", iz_naive[i * k + j]);
+  //   }
+  //   printf("\n");
+  // }
+  return 1;
 }
 
 /*******************************************************************************
@@ -447,7 +448,7 @@ void seek_naive(double* a, int n, int k, int* iz) {
 
   for(i = 0; i < n; i++) {
     int *sub_iz = malloc(k * sizeof(int));
-    findNeighborsNaive(points, points[i], sub_iz, n, k);
+    // findNeighborsNaive(points, points[i], sub_iz, n, k);
     seekHelper(points, n, k, sub_iz, points[i]);
     putNeighborsIntoIz(iz, sub_iz, i, k);
     free(sub_iz);

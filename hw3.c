@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   int n, k, *iz, *iz_naive, i, j, h;
   double *a;
 
-  n = 1000;
+  n = 100000;
   k = 50;
   a = malloc(n * 2 * sizeof(double));
   iz = calloc(n * k, sizeof(int));

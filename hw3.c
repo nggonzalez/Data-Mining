@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <time.h>
 #include <limits.h>
 
 typedef struct point {
@@ -27,15 +26,16 @@ typedef struct box {
       searched;
 } Box;
 
-/*
- * Method Headers
- */
-
+/*******************************************************************************
+ *******************************************************************************
+ *                                METHOD HEADERS                               *
+ *******************************************************************************
+ ******************************************************************************/
 int main(int argc, char *argv[]);
 void printBox(Box *b);
-
 void seek(double* a, int n, int k, int* iz);
-void build_qtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k, int *permutations);
+void buildQtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k,
+                int *permutations);
 void sort(int *permutations, Point *points, int *indices, int permStart,
           int permEnd, Box child1, Box child2, Box child3, Box child4, int n);
 int pointInBox(Point p, Box b);
@@ -45,8 +45,6 @@ void findNeighbors(Box **qtree, Box **neighboringLeaves, Point p, double radius,
 int overlap(Point p, double radius, Box node);
 void findKthDistance(double *distances, int n, int k, double* kth);
 void seekHelper(Point* points, int n, int k, int* iz, Point current);
-
-
 void seek_naive(double* a, int n, int k, int* iz);
 void fillPoints(Point* points, double *a, int n);
 void findNeighborsNaive(Point* points, Point current, int *sub_iz, int n, int k);
@@ -71,29 +69,25 @@ int main(int argc, char *argv[]) {
   }
 
   seek_naive(a, n, k, iz_naive);
-
-  for(i = 0; i < n; i++) {
-    printf("(%d)[%f, %f]: ", i, a[2 * i], a[2 * i + 1]);
-    for(j = 0; j < k; j++){
-      printf("%d, ", iz_naive[i * k + j]);
-    }
-    printf("\n");
-  }
-
   seek(a, n, k, iz);
-
   for(i = 0; i < n; i++) {
-    printf("(%d)[%f, %f]: ", i, a[2 * i], a[2 * i + 1]);
+    printf("(%d)[%.5f, %.5f]:\t", i, a[2 * i], a[2 * i + 1]);
     for(j = 0; j < k; j++){
-      printf("%d, ", iz[i * k + j]);
+      printf("%d\t", iz[i * k + j]);
+    }
+    printf("||\t");
+    for(j = 0; j < k; j++){
+      printf("%d\t", iz_naive[i * k + j]);
     }
     printf("\n");
   }
 }
 
-/*
- * Seek Fast Code
- */
+/*******************************************************************************
+ *******************************************************************************
+ *                                SEEK FAST CODE                               *
+ *******************************************************************************
+ ******************************************************************************/
 void seek(double* a, int n, int k, int* iz) {
   int i, j, h;
 
@@ -111,7 +105,7 @@ void seek(double* a, int n, int k, int* iz) {
   Box **qtree, *currentBox;
   qtree = calloc((*qtreeSize), sizeof(Box*));
 
-  build_qtree(&qtree, qtreeSize, points, n, k, permutations);
+  buildQtree(&qtree, qtreeSize, points, n, k, permutations);
 
   Box **searchQueue = malloc((*qtreeSize) * sizeof(Box *));
   Box **leaves = malloc((*qtreeSize) * sizeof(Box *));
@@ -147,7 +141,8 @@ void seek(double* a, int n, int k, int* iz) {
     int *neighboringLeafIndex = malloc(sizeof(int));
     *neighboringLeafIndex = 0;
 
-    findNeighbors(qtree, neighboringLeaves, points[i], radius, currentBox, neighboringLeafIndex, n);
+    findNeighbors(qtree, neighboringLeaves, points[i], radius, currentBox,
+                  neighboringLeafIndex, n);
 
     int subN = 0;
     Point *subPoints = malloc(n * sizeof(Point));
@@ -164,7 +159,8 @@ void seek(double* a, int n, int k, int* iz) {
   }
 }
 
-void build_qtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k, int *permutations) {
+void buildQtree(Box ***qtree, int *qtreeSize, Point *points, int n, int k,
+                int *permutations) {
   double xMax = INT_MIN, yMax = INT_MIN;
   double xMin = INT_MAX, yMin = INT_MAX;
 
@@ -437,10 +433,11 @@ int overlap(Point p, double radius, Box node) {
 }
 
 
-
-/*
- * Seek Naive Code
- */
+/*******************************************************************************
+ *******************************************************************************
+ *                               SEEK NAIVE CODE                               *
+ *******************************************************************************
+ ******************************************************************************/
 
 void seek_naive(double* a, int n, int k, int* iz) {
   Point* points = malloc(n * sizeof(Point));
@@ -471,7 +468,6 @@ void findNeighborsNaive(Point* points, Point current, int *sub_iz, int n, int k)
   }
 
   sortNeighborsByDistance(distances, n -  1);
-
   for(i = 0; i < k; i++) {
     sub_iz[i] = distances[i].index;
   }
